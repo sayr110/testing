@@ -32,7 +32,10 @@ int main(int argc, char **argv) {
   fpu = fopen("output.txt", "rb+");
   if(NULL == fpu) /*if file does not exist, create it*/
   {
-    fpu = fopen("output.txt", "wb");
+   if(NULL == fpu = fopen("output.txt", "wb")) {
+      printf("Error: could not creat file/n");
+      return -1;
+    }
   }
 
 /*read xor and write*/
