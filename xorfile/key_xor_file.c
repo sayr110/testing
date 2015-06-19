@@ -1,9 +1,5 @@
 #include <stdio.h>
-
-
-
-int char_atoi(char *s);
-
+#include "config.h"
 
 int main(int argc, char **argv) {
   FILE *fp,*fpu;
@@ -11,7 +7,7 @@ int main(int argc, char **argv) {
   int temp;
   char c;
   if(3 != argc) {
-    printf("Error: need 3 arguments/n");
+    print_usage();
     return -1;
   }
 
@@ -24,16 +20,22 @@ int main(int argc, char **argv) {
 /*open file*/
   fp = fopen(argv[1],"r");
   if(NULL == fp) {
-    printf("Error: failed to open file/n");
+    printf("Error: failed to open file\n");
     return -1;
   }
 
+  if(validate_file(fp) == 0) {
+    printf("Error: failed to validate the input file\n");
+	return -1;
+  }
+  
+  
 /*create output file*/
   fpu = fopen("output.txt", "rb+");
   if(NULL == fpu) /*if file does not exist, create it*/
   {
-   if(NULL == fpu = fopen("output.txt", "wb")) {
-      printf("Error: could not creat file/n");
+   if((fpu = fopen("output.txt", "wb")) == NULL) {
+      printf("Error: could not create file\n");
       return -1;
     }
   }
@@ -60,4 +62,33 @@ int char_atoi(char *s) {
     return -1;
   }
   return temp;
+}
+
+
+int validate_file(FILE *fp) {
+  /* FIXME: TODO: Validate the first BYTES_TO_VALIDATE bytes and not just the first one */
+  char magic = MAGIC_STRING; // FIXME: TODO: magic to be char *
+
+  // FIXME: TODO: save the original file pointer position in order to restore it later (ftell)
+  // Seek the file pointer to the start
+  if(fseek(fp, 0, SEEK_SET) != 0) {
+	return 0;
+  }
+  
+  // read the magic
+  if(fgetc(fp) != magic || magic == EOF) {
+    return 0; // EOF or first char is not magic
+  }
+  
+  // Restore the file pointer to the start
+  if(fseek(fp, 0, SEEK_SET) != 0) {
+	return 0;
+  }
+  
+  // this file is okay
+  return 1;
+}
+
+void print_usage() {
+  printf("Usage: xorfile input.txt key\n");
 }
