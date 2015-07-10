@@ -67,26 +67,31 @@ int char_atoi(char *s) {
 
 int validate_file(FILE *fp) {
   /* FIXME: TODO: Validate the first BYTES_TO_VALIDATE bytes and not just the first one */
-  char magic = MAGIC_STRING; // FIXME: TODO: magic to be char *
-
+  char *magic = MAGIC_STRING; // FIXME: TODO: magic to be char *
+  FILE *temp = fp;
+  char c;
   // FIXME: TODO: save the original file pointer position in order to restore it later (ftell)
   // Seek the file pointer to the start
   if(fseek(fp, 0, SEEK_SET) != 0) {
-	return 0;
+	return 1;
   }
   
   // read the magic
-  if(fgetc(fp) != magic || magic == EOF) {
-    return 0; // EOF or first char is not magic
+  while (c=fgetc(fp) != EOF) {
+    if (*magic == '\0' || c != *magic) {
+      printf("Error: not magic\n");
+      return 1;
+    }
+    magic++;
   }
   
   // Restore the file pointer to the start
   if(fseek(fp, 0, SEEK_SET) != 0) {
-	return 0;
+	return 1;
   }
   
   // this file is okay
-  return 1;
+  return 0;
 }
 
 void print_usage() {

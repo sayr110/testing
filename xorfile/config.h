@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 #define BYTES_TO_VALIDATE 4
-#define MAGIC_STRING 'A'
+#define MAGIC_STRING "ABCD"
 
 
 int char_atoi(char *);
